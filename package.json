@@ -1,0 +1,9 @@
+{
+  "name": "my-x402-api",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.19.2",
+    "x402-express": "^0.6.0"
+  }
+}
