@@ -1,17 +1,12 @@
 import express from "express";
-import { paymentMiddleware, x402ResourceServer } from "@x402/express";
-import { ExactEvmScheme } from "@x402/evm/exact/server";
-import { HTTPFacilitatorClient } from "@x402/core/server";
+import { paymentMiddleware, HTTPFacilitatorClient } from "@x402/express";
 
+const PAY_TO = "0xC4CAF1271B8B2C2C91fC1B3e3aE3B0B3D2a8A4b0";
 const app = express();
-const PAY_TO = "0xC4CAF127afD0A7ae22bbfA27A8f4A9634FD0B0BF0d";
 
 const facilitatorClient = new HTTPFacilitatorClient({
   url: "https://x402.org/facilitator",
 });
-
-const server = new x402ResourceServer(facilitatorClient)
-  .register("eip155:*", new ExactEvmScheme());
 
 app.use(paymentMiddleware(
   {
@@ -27,7 +22,7 @@ app.use(paymentMiddleware(
       discoverable: true,
     },
   },
-  server
+  facilitatorClient
 ));
 
 app.get("/api/price", async (req, res) => {
