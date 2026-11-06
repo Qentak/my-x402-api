@@ -19,7 +19,7 @@ app.use(paymentMiddleware(
       accepts: [{
         scheme: "exact",
         price: "$0.01",
-        network: "eip155:84532",
+        network: "eip155:8453",
         payTo: PAY_TO,
       }],
       description: "Bitcoin price API",
