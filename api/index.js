@@ -1,36 +1,33 @@
 import express from "express";
-import { paymentMiddleware, HTTPFacilitatorClient } from "@x402/express";
+import { paymentMiddleware } from "@x402/express";
 
-const PAY_TO = "0xC4CAF1271B8B2C2C91fC1B3e3aE3B0B3D2a8A4b0";
 const app = express();
 
-const facilitatorClient = new HTTPFacilitatorClient({
-  url: "https://x402.org/facilitator",
-});
+const PAY_TO = "0x742d35Cc6634C0532925a3b844Bc454e4438f44e";
+const facilitator = { url: "https://x402.org/facilitator" };
 
-app.use(paymentMiddleware(
-  {
-    "GET /api/price": {
-      accepts: [{
-        scheme: "exact",
+app.use(
+  paymentMiddleware(
+    PAY_TO,
+    {
+      "/api/price": {
         price: "$0.01",
-        network: "eip155:8453",
-        payTo: PAY_TO,
-      }],
-      description: "Bitcoin price API",
-      mimeType: "application/json",
-      discoverable: true,
+        network: "base-sepolia",
+        config: { description: "Bitcoin price" },
+      },
     },
-  },
-  facilitatorClient
-));
+    facilitator
+  )
+);
+
+app.get("/", (req, res) => {
+  res.json({ message: "API is running" });
+});
 
 app.get("/api/price", async (req, res) => {
   const r = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd");
   const data = await r.json();
-  res.json({ success: true, bitcoin_usd: data.bitcoin.usd, timestamp: new Date().toISOString() });
+  res.json({ bitcoin_usd: data.bitcoin.usd });
 });
-
-app.get("/", (req, res) => res.json({ ok: true, try: "/api/price" }));
 
 export default app;
